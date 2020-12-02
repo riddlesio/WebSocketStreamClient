@@ -2,7 +2,6 @@
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include "WebSocketStreamClient.h"
-#include "WebSocketClient250.h"
 
 #define DEBUG_MAIN(...) Serial.printf(__VA_ARGS__)
 
@@ -30,7 +29,7 @@ void onMqttPublish(char *topic, byte *payload, unsigned int length)
 }
 
 WiFiClientSecure wiFiClient;
-WebSocketClient250 wsClient(wiFiClient, host, port);
+WebSocketClient wsClient(wiFiClient, host, port);
 WebSocketStreamClient wsStreamClient(wsClient, path);
 PubSubClient mqtt(wsStreamClient);
 
@@ -48,8 +47,10 @@ void setup()
     delay(500);
   }
   DEBUG_MAIN("\nWiFi connected to %s\n", WiFi.SSID().c_str());
-
-  wiFiClient.setFingerprint(fingerprint);
+  
+  wiFiClient.setInsecure();
+  //wiFiClient.setFingerprint(fingerprint);
+  
   mqtt.setCallback(onMqttPublish);
 
   DEBUG_MAIN("mqtt connecting\n");
