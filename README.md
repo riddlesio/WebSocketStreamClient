@@ -2,9 +2,14 @@
 
 A WebSocketClient that implements Client.h so that the PubCubClient MQTT library can use it - with wss or ws.
 
+## Adjustments
+
+The mosquitto websocket implementation requires the ***Sec-WebSocket-Protocol*** header. To achive this I needed to fork [arduino-libraries/ArduinoHttpClient](https://github.com/arduino-libraries/ArduinoHttpClient) to [riddlesio/ArduinoHttpClient](https://github.com/riddlesio/ArduinoHttpClient)
+
+
 ## Dependencies
 
-* [ArduinoHttpClient 0.4.0](https://github.com/arduino-libraries/ArduinoHttpClient) and all of it's dependencys. 
+* [Fork of ArduinoHttpClient]((https://github.com/riddlesio/ArduinoHttpClient) and all of it's dependencys. 
 <s>Because this works with esp8266/2.4.2 but not with esp8266/2.5.0, use the supplied WebSocketClient250 class instead.</s>
 
 WITH Board version 2.7.X : (don't work on previous versions)
@@ -30,8 +35,8 @@ void onMqttPublish(char *topic, byte *payload, unsigned int length)
 }
 
 WiFiClientSecure wiFiClient;
-WebSocketClient250 wsClient(wiFiClient, host, port);
-WebSocketStreamClient wsStreamClient(wsClient, path);
+WebSocketClient wsClient(wiFiClient, host, port);
+WebSocketStreamClient wsStreamClient(wsClient, path, protocol);
 PubSubClient mqtt(wsStreamClient);
 
 wiFiClient.setFingerprint(fingerprint);
